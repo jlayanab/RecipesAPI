@@ -12,7 +12,7 @@
     "RecipesAPI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:56214",
+      "applicationUrl": "http://localhost:24026",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

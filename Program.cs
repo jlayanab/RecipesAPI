@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -13,17 +12,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(swagger => {
             swagger.SwaggerDoc("v1", new OpenApiInfo{ Title = "RecipesApi", Version = "v1"});
-            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
+                In = ParameterLocation.Header,
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
+                Description = "JWT Authorization header using Bearer sheme. \r\n\r\n Enter 'Bearer' [space] an then your token in the text input below. \r\n\r\nExample: \"Bearer 1234abcdef\"",
+                //Description = "Please enter a valid token",
                 BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "JWT Authorization header using Bearer sheme. \r\n\r\n Enter 'Beader' [space] an then your token in the text input below. \r\n\r\nExample: \"Bearer 1234abcdef\"",
-
+                Scheme = "Bearer"
             });
-            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement()
             {
                 {
                     new OpenApiSecurityScheme
@@ -34,33 +33,25 @@ builder.Services.AddSwaggerGen(swagger => {
                             Id = "Bearer"
                         }
                     },
-                    new string[]{}
+                    new string[] {}
                 }
             });
 });
-/*
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-        options => builder.Configuration.Bind("JwtSettings", options))
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-        options => builder.Configuration.Bind("CookieSettings", options));
-
-*/
 builder.Services
-            .AddAuthentication(opt => {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options => {
+            .AddAuthentication(option => {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options => {
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudience ="https://localhost:5001/",
-                    ValidIssuer ="https://localhost:5001/",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("keyboard_cat")),
+                    ValidAudience = "https://localhost:5001",
+                    ValidIssuer = "https://localhost:5001",
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes("really_big_keyboard_cat")),
                 };
             });
 
